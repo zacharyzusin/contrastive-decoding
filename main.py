@@ -1,9 +1,26 @@
 import transformers as tr
+import torch
+import torch.nn.functional as F
+from typing import Tuple, Optional
 
 amateur_path = "Qwen/Qwen2.5-Coder-0.5B-Instruct"
-expert_path = "Qwen/Qwen2.5-Coder-1.5B-Instruct"
+expert_path = "Qwen/Qwen2.5-Coder-3B-Instruct"
 
 tokenizer = tr.AutoTokenizer.from_pretrained(amateur_path)
+
+amateur_model = tr.AutoModelForCausalLM.from_pretrained(
+    amateur_path,
+    torch_dtype=torch.float16,
+    device_map="auto"
+)
+expert_model = tr.AutoModelForCausalLM.from_pretrained(
+    expert_path,
+    torch_dtype=torch.float16,
+    device_map="auto"
+)
+
+amateur_model.eval()
+expert_model.eval()
 
 user_message = """Give a very very brief docstring for the following function:\n```\nfunction updateEloScores(
 	scores,
