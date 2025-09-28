@@ -1,5 +1,7 @@
 1. What should you do if the two models have different tokenizers?
+   
 Different tokenizers introduce a fundamental incompatibility because contrastive decoding requires comparing probability distributions over the same vocabulary space, but different tokenizers mean token IDs correspond to different words or subwords, making the contrastive objective meaningless. The most practical solution is using models from the same family with compatible tokenizers (like both Qwen models in this implementation), though you could possibly attempt vocabulary alignment by fine-tuning the amateur model to use the expert's tokenizer or creating mappings between vocabularies, but this is likely difficult to implement. Perhaps you could create a mapping by building a translation table that matches tokens between vocabularies based on their decoded text representations, but this would be lossy since tokens don't align one-to-one across different tokenization schemes, and you'd need to handle cases where one tokenizer splits words differently than another.
  
-2. Do you think contrastive decoding is used in practice?
+3. Do you think contrastive decoding is used in practice?
+
 I don't think contrastive decoding is often used in practice today because it adds significant complexity and computational overhead (as a result of using two models) to the decoding process while only producing the relatively minor positive of subtle improvements in coherence. The memory overhead of running two models simultaneously is a real cost that many organizations probably would rather avoid.
